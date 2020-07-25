@@ -1,5 +1,6 @@
 import { PlainObject } from './types';
 import { Key, KnownKeys } from './keys';
+import { Spread } from './util';
 
 export const setItem = <T, K extends keyof T>(object: T, property: K, value: T[K]) => {
   object[property] = value;
@@ -16,16 +17,6 @@ export const hasItem = <T extends PlainObject>(object: T, property: any): proper
 export const getKnownKeys = <T extends PlainObject>(object: T) => {
   return Object.keys(object) as Array<KnownKeys<T>>;
 };
-
-type Id<T> = { [P in keyof T]: T[P] };
-
-type SpreadProp<L, R, P extends keyof (L & R)> = P extends keyof R
-  ? undefined extends R[P]
-    ? L[Extract<P, keyof L>] | R[P]
-    : R[P]
-  : L[Extract<P, keyof L>];
-
-type Spread<L, R> = Id<{ [P in keyof (L & R)]: SpreadProp<L, R, P> }>;
 
 export const extendObject = <T extends PlainObject, U extends PlainObject>(first: T, second: U) => {
   return Object.assign({}, first, second) as Spread<T, U>;

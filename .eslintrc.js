@@ -16,7 +16,8 @@ module.exports = {
         'printWidth': 130,
         'singleQuote': true,
         'endOfLine': 'auto',
-        'trailingComma': 'none'
+        'trailingComma': 'none',
+        'arrowParens': 'avoid'
       }
     ],
     'sort-imports': 'off',

@@ -1,4 +1,4 @@
-import { Builtin, PlainObject, Primitive } from './types';
+import { Builtin, PlainObject, Primitive, ImmutableObject, ImmutableSet, AnySet, AnyMap, ImmutableMap } from './types';
 import { IsTuple } from './is';
 
 // Flat
@@ -52,34 +52,26 @@ export type DeepPartial<T> = T extends Primitive
 
 export type DeepReadonly<T> = T extends Primitive
   ? T
-  : T extends Map<infer K, infer V>
-  ? ReadonlyMap<DeepReadonly<K>, DeepReadonly<V>>
-  : T extends ReadonlyMap<infer K, infer V>
-  ? ReadonlyMap<DeepReadonly<K>, DeepReadonly<V>>
+  : T extends AnyMap<infer K, infer V>
+  ? ImmutableMap<K, V>
   : T extends WeakMap<infer K, infer V>
   ? WeakMap<DeepReadonly<K>, DeepReadonly<V>>
-  : T extends Set<infer U>
-  ? ReadonlySet<DeepReadonly<U>>
-  : T extends ReadonlySet<infer U>
-  ? ReadonlySet<DeepReadonly<U>>
+  : T extends AnySet<infer U>
+  ? ImmutableSet<U>
   : T extends WeakSet<infer U>
   ? WeakSet<DeepReadonly<U>>
   : T extends Promise<infer U>
   ? Promise<DeepReadonly<U>>
   : T extends PlainObject
-  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+  ? ImmutableObject<T>
   : Readonly<T>;
 export type DeepWritable<T> = T extends Primitive
   ? T
-  : T extends Map<infer K, infer V>
-  ? Map<DeepWritable<K>, DeepWritable<V>>
-  : T extends ReadonlyMap<infer K, infer V>
+  : T extends AnyMap<infer K, infer V>
   ? Map<DeepWritable<K>, DeepWritable<V>>
   : T extends WeakMap<infer K, infer V>
   ? WeakMap<DeepWritable<K>, DeepWritable<V>>
-  : T extends Set<infer U>
-  ? Set<DeepWritable<U>>
-  : T extends ReadonlySet<infer U>
+  : T extends AnySet<infer U>
   ? Set<DeepWritable<U>>
   : T extends WeakSet<infer U>
   ? WeakSet<DeepWritable<U>>
@@ -88,3 +80,5 @@ export type DeepWritable<T> = T extends Primitive
   : T extends PlainObject
   ? { -readonly [K in keyof T]: DeepWritable<T[K]> }
   : T;
+
+export type Buildable<T> = DeepPartial<DeepWritable<T>>;
